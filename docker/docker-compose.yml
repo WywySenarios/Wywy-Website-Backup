@@ -1,0 +1,15 @@
+services:
+  wywywebsite-backup:
+    container_name: wywywebsite-backup
+    tty: true
+    restart: always
+    build:
+      context: ../
+      dockerfile: apps/backup/Dockerfile
+    env_file:
+      - path: .env
+        required: true
+    ports:
+      - ${BACKUP_PORT}:${BACKUP_PORT}
+    volumes:
+      - ./../data:/data
