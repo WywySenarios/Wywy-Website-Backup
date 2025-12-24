@@ -10,6 +10,7 @@ services:
       - path: .env
         required: true
     ports:
-      - ${BACKUP_PORT}:${BACKUP_PORT}
+      - ${BACKUP_SERVER_PORT}:${BACKUP_SERVER_PORT}
     volumes:
       - ./../data:/data
+    command: ["python3", "manage.py", "runserver", "0.0.0.0:${BACKUP_SERVER_PORT}"]
