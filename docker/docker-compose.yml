@@ -8,7 +8,7 @@ services:
       args:
         FTP_UID: ${FTP_UID}
         FTP_GID: ${FTP_GID}
-        FTP_USER: ftpuser
+        FTP_USER: ${FTP_USER}
         FTP_PASSWORD: ${BACKUP_SERVER_PASSWORD}
     env_file:
       - path: .env
@@ -17,6 +17,5 @@ services:
       - 21:21
       - 30000-30009:30000-30009  # passive ports
     volumes:
-      - ./../data:/srv/ftp
-      # - ./../apps/backup/vsftpd.conf:/etc/vsftpd.conf
+      - ./../data:/home/${FTP_USER}
     entrypoint: /entrypoint.sh
