@@ -2,15 +2,21 @@ services:
   wywywebsite_backup:
     container_name: wywywebsite_backup
     tty: true
-    restart: always
     build:
       context: ../
       dockerfile: apps/backup/Dockerfile
+      args:
+        FTP_UID: ${FTP_UID}
+        FTP_GID: ${FTP_GID}
+        FTP_USER: ftpuser
+        FTP_PASSWORD: ${BACKUP_SERVER_PASSWORD}
     env_file:
       - path: .env
         required: true
     ports:
-      - ${BACKUP_SERVER_PORT}:${BACKUP_SERVER_PORT}
+      - 21:21
+      - 30000-30009:30000-30009  # passive ports
     volumes:
-      - ./../data:/data
-    command: [ "python3", "manage.py", "runserver", "0.0.0.0:${BACKUP_SERVER_PORT}" ]
+      - ./../data:/srv/ftp
+      # - ./../apps/backup/vsftpd.conf:/etc/vsftpd.conf
+    entrypoint: /entrypoint.sh
