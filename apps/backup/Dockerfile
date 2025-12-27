@@ -1,15 +1,21 @@
-FROM python:3.14.0-slim-bookworm
+FROM debian:bookworm
 
-COPY ./apps/backup/requirements.txt .
-RUN rm -rf /var/lib/apt/lists/*
+ARG FTP_UID
+ARG FTP_GID
+ARG FTP_USER
+ARG FTP_PASSWORD
 
-RUN pip install -r requirements.txt
+RUN apt update && apt install -y vsftpd
 
-RUN useradd -m app
-USER app
+RUN groupadd -g ${FTP_GID} ${FTP_USER} \
+    && useradd -u ${FTP_UID} -g ${FTP_GID} -m ${FTP_USER} \
+    && echo "${FTP_USER}:${FTP_PASSWORD}" | chpasswd
+RUN mkdir -p /srv/ftp && chown ftpuser:ftpuser /srv/ftp
 
-COPY --chown=app:app ./apps/backup .
+COPY apps/backup/vsftpd.conf /etc/vsftpd.conf
 
-EXPOSE 8000
+COPY apps/backup/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
+EXPOSE 21
+EXPOSE 30000-30009

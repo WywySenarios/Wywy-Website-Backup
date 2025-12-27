@@ -6,11 +6,17 @@ services:
     build:
       context: ../
       dockerfile: apps/backup/Dockerfile
+      args:
+        FTP_UID: ${FTP_UID}
+        FTP_GID: ${FTP_GID}
+        FTP_USER: ${FTP_USER}
+        FTP_PASSWORD: ${BACKUP_SERVER_PASSWORD}
     env_file:
       - path: .env
         required: true
     ports:
-      - ${BACKUP_SERVER_PORT}:${BACKUP_SERVER_PORT}
+      - 21:21
+      - 30000-30009:30000-30009  # passive ports
     volumes:
-      - ./../data:/data
-    command: [ "python3", "manage.py", "runserver", "0.0.0.0:${BACKUP_SERVER_PORT}" ]
+      - ./../data:/home/${FTP_USER}
+    entrypoint: /entrypoint.sh
