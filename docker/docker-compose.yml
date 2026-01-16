@@ -16,7 +16,8 @@ services:
         required: true
     ports:
       - 21:21
-      - 30000-30009:30000-30009  # passive ports
+      - 30000-30009:30000-30009 # passive ports
     volumes:
       - ./../data:/home/${FTP_USER}
+      - ./../logs:/var/log/
     entrypoint: /entrypoint.sh
