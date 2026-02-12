@@ -1,1 +1,0 @@
-sudo docker exec -it wywywebsite_backup bash
